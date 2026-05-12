@@ -21,6 +21,16 @@ header {
     padding-bottom: 24px;
     margin-bottom: 32px;
 }
+.header-image {
+    display: block;
+    width: 100%;
+    height: 200px;
+    margin: 0 0 24px 0;
+    object-fit: cover;
+    object-position: center bottom;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+}
 h1 {
     color: #f0f6fc;
     font-size: 2.5em;
@@ -168,6 +178,10 @@ footer {
     .container {
         padding: 24px 16px;
         margin: 16px;
+    }
+    
+    .header-image {
+        height: 120px;
     }
     
     .profile-section {
