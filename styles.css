@@ -111,12 +111,18 @@ img { display: block; max-width: 100%; }
 .hero-banner img { width: 100%; height: auto; }
 .intro {
     display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-    align-items: center;
-    gap: 32px 48px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
     padding: 44px 0 60px;
 }
 .intro-heading, .intro-summary { min-width: 0; }
+/* Give the name the full row; place the description and actions beneath it. */
+.intro-summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 24px 48px;
+}
 .eyebrow, .section-label {
     margin: 0 0 16px;
     color: var(--accent);
@@ -135,17 +141,18 @@ h1 {
     letter-spacing: -.045em;
     overflow-wrap: break-word;
 }
-h1 > span { display: block; }
+/* Let the name wrap naturally when the screen or text size requires it. */
+h1 > span { display: inline; }
 .title-dot { color: var(--accent); }
 .intro-text {
-    max-width: 43ch;
+    max-width: 64ch;
     margin: 0;
     color: var(--body-text);
     font-size: 1.0625rem;
     line-height: 1.75;
     text-wrap: pretty;
 }
-.profile-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 24px; }
+.profile-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 0; }
 .social-links { display: flex; flex-wrap: nowrap; gap: 8px; }
 .button {
     display: inline-flex;
@@ -268,7 +275,7 @@ h2 { margin: 0; font-size: clamp(1.875rem, 3vw, 2.5rem); font-weight: 600; line-
 
 @media (max-width: 1024px) {
     .container { width: calc(100% - 56px); }
-    .intro { gap: 28px; }
+    .intro-summary { column-gap: 28px; }
     h1 { font-size: clamp(2.375rem, 4.8vw, 3.125rem); }
     .about-section { grid-template-columns: 240px minmax(0, 1fr); gap: 40px; }
     .project-featured { gap: 24px; padding: 24px; }
@@ -280,10 +287,11 @@ h2 { margin: 0; font-size: clamp(1.875rem, 3vw, 2.5rem); font-weight: 600; line-
     .site-nav { min-height: 80px; }
     .nav-links { gap: 2px; }
     .nav-links a { padding: 8px 10px; }
-    .intro { grid-template-columns: 1fr; gap: 24px; padding: 32px 0 44px; }
+    .intro { padding: 32px 0 44px; }
+    .intro-summary { grid-template-columns: minmax(0, 1fr); gap: 20px; }
     h1 { font-size: clamp(2.5rem, 7vw, 3.5rem); }
     .intro-text { max-width: 56ch; }
-    .profile-actions { margin-top: 20px; }
+    .profile-actions { justify-content: flex-start; }
     .about-section { grid-template-columns: 190px minmax(0, 1fr); align-items: start; gap: 28px; padding: 44px 0; }
     .bio-section { margin-top: 18px; }
     .bio-section p { font-size: 1rem; }
