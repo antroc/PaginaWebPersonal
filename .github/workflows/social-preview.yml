@@ -1,0 +1,81 @@
+name: Build social preview image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - img/rocamora-banner.webp
+      - .github/workflows/social-preview.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: social-preview-main
+  cancel-in-progress: false
+
+jobs:
+  image:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out the current main branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: main
+
+      - name: Install the image conversion dependency
+        run: |
+          python3 -m venv "$RUNNER_TEMP/social-image-venv"
+          "$RUNNER_TEMP/social-image-venv/bin/python" -m pip install --disable-pip-version-check 'Pillow==12.3.0'
+
+      - name: Prepare and validate the sharing image
+        run: |
+          "$RUNNER_TEMP/social-image-venv/bin/python" - <<'PY'
+          from pathlib import Path
+          import hashlib
+          from PIL import Image, ImageOps
+
+          source = Path('img/rocamora-banner.webp')
+          target = Path('img/rocamora-social-v1.jpg')
+          size = (1200, 630)
+          with Image.open(source) as original:
+              banner = ImageOps.exif_transpose(original).convert('RGB')
+              banner = ImageOps.contain(banner, size, Image.Resampling.LANCZOS)
+          # Preserve the entire supplied artwork; never stretch or crop its text.
+          preview = Image.new('RGB', size, '#10192c')
+          preview.paste(banner, ((size[0] - banner.width) // 2, (size[1] - banner.height) // 2))
+          preview.save(target, 'JPEG', quality=82, optimize=True, progressive=True)
+          with Image.open(target) as check:
+              assert check.format == 'JPEG', 'Unexpected image format'
+              assert check.size == size, 'Unexpected image dimensions'
+              check.verify()
+          data = target.read_bytes()
+          assert 0 < len(data) < 300_000, 'Preview must stay below 300 kB'
+          blob = hashlib.sha1(b'blob ' + str(len(data)).encode('ascii') + b'\0' + data).hexdigest()
+          print(f'Validated {target}: {size[0]}x{size[1]}, {len(data)} bytes, git blob {blob}')
+          PY
+
+      - name: Commit only the generated image
+        id: commit
+        run: |
+          git add -- img/rocamora-social-v1.jpg
+          if git diff --cached --quiet; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Update the generated social sharing image'
+          # A non-fast-forward push fails rather than overwriting concurrent edits.
+          git push origin HEAD:main
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+
+      - name: Request a Pages rebuild for the generated asset
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
