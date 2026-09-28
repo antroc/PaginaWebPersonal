@@ -208,8 +208,8 @@ h2 { margin: 0; font-size: clamp(1.875rem, 3vw, 2.5rem); font-weight: 600; line-
 
 /* Every project shares the same typography, borders, spacing and inset panels. */
 .projects-section { padding: 60px 0 72px; border-top: 1px solid var(--line); }
-.section-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px 32px; margin-bottom: 32px; }
-.section-note { max-width: 28ch; margin: 0 0 4px; color: var(--muted); font-size: .9375rem; text-align: right; }
+.section-heading { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px 32px; margin-bottom: 32px; }
+.section-note { max-width: 100%; margin: 0 0 4px; color: var(--muted); font-size: .9375rem; text-align: right; }
 .projects-list { display: grid; gap: 24px; }
 .project-item { min-width: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
 .project-featured { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 40px; padding: 32px; }
@@ -297,7 +297,7 @@ h2 { margin: 0; font-size: clamp(1.875rem, 3vw, 2.5rem); font-weight: 600; line-
     .bio-section p { font-size: 1rem; }
     .projects-section { padding: 44px 0; }
     .section-heading { align-items: start; flex-direction: column; gap: 16px; }
-    .section-note { max-width: none; text-align: left; }
+    .section-note { text-align: left; }
     .project-featured { grid-template-columns: 1fr; }
     .featured-copy .project-tags { margin-top: 24px; }
     .feature-controls, .project-highlight { margin-bottom: 0; }
